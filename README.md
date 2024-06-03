@@ -9,3 +9,14 @@ The complexity and heterogeneity of cancer pathogenesis necessitate the developm
 
 
 # Using Orgapreditor
+
+### Fine-tuning OrgaExtractor
+To fine-tune OrgaExtractor with your own dataset:
+
+```
+python3 main.py --lr 1e-5 --batch_size 2 --num_epoch 100 --data_dir YOUR_DATASET_PATH --ckpt_dir DOWNLOADED_MODEL_PATH --result_dir DESIRABLE_RESULT_PATH --mode "train" --cuda_devices 0 --train_continue "on"
+```
+
+## Contact
+Junho Hong(ra9027@yonsei.ac.kr) Taeyong Kweon(kmskty3@yuhs.ac)
+
