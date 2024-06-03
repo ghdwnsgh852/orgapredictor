@@ -1,7 +1,7 @@
 # OrgaPredictor
-<img width="397" alt="image" src="https://github.com/ghdwnsgh852/orgapredictor/assets/29062695/3e75b61d-2955-440c-a271-bcd8d8766852"><br>
+<img alt="image" src="https://github.com/ghdwnsgh852/orgapredictor/assets/29062695/3e75b61d-2955-440c-a271-bcd8d8766852"><br>
 
-<img width="397" alt="image" src="https://github.com/ghdwnsgh852/orgapredictor/assets/29062695/a44993d2-809f-468c-a237-20e9d6d59276">
+<img alt="image" src="https://github.com/ghdwnsgh852/orgapredictor/assets/29062695/a44993d2-809f-468c-a237-20e9d6d59276">
 
 
 
