@@ -1,42 +1,54 @@
 import sys
-
-from torch.utils.tensorboard import SummaryWriter
-
-
-
+import argparse
 import os
-import random
 import time
 
-from util import models_vit
 import numpy as np
 import pandas as pd
+
 import timm
+assert timm.__version__ == "0.3.2"  # version check
+from torch.utils.tensorboard import SummaryWriter
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
+
 from PIL import Image
 from sklearn.metrics import (accuracy_score, classification_report,
                              roc_auc_score)
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 from tqdm import tqdm
-import time
-assert timm.__version__ == "0.3.2"  # version check
 
-batch_size = 4
-
-name = "finetune"
+from util import models_vit
+from util.dataset import CustomDataset, train_transform, test_transform
 
 
 
 
 
-ckpt_path = f"./ckpt/{name}"
+paser = argparse.ArgumentParser()
+paser.add_argument('--batch_size', type=int, default=4)
+paser.add_argument('--name', type=str, default='finetune')
+paser.add_argument('--mode',type=str, default='finetune')
+paser.add_argument('--epochs', type=int, default=100)
+paser.add_argument('--lr', type=float, default=1e-4)
+paser.add_argument('--device', type=str, default='cuda')
+paser.add_argument('--train_csv', type=str, default='./csv/train_pair.csv')
+paser.add_argument('--val_csv', type=str, default='./csv/valid_pair.csv')
+paser.add_argument('--test_csv', type=str, default='./csv/test_pair.csv')
+paser.add_argument('--name', type=str, default=None)
+paser.add_argument('--pretrained_weight', type=str, default='./pretrained/pretrained.pth')
+
+
+args = paser.parse_args()
+
+
+
+
+ckpt_path = f"./ckpt/{args.name}"
 os.makedirs(ckpt_path, exist_ok=True)
 
-logs_path = f"./logs/{name}"
+logs_path = f"./logs/{args.name}"
 os.makedirs(logs_path, exist_ok=True)
 print('path done')
 train_writer = SummaryWriter(f"{logs_path}/train")
@@ -46,99 +58,47 @@ val_writer = SummaryWriter(f"{logs_path}/val")
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
 
-train_df = pd.read_csv("./csv/train_pair.csv")
-val_df = pd.read_csv("./csv/valid_pair.csv")
-test_df = pd.read_csv("./csv/test_pair.csv")
+train_df = pd.read_csv(args.train_csv)
+val_df = pd.read_csv(args.val_csv)
+test_df = pd.read_csv(args.test_csv)
 
 print('csv done')
 
 
 
-class CustomDataset(Dataset):
-
-    def __init__(self, df, transform=None):
-        self.df = df
-        # self.df=df
-        self.transform = transform
-
-    def __len__(self):
-        return len(self.df)
-
-    def __getitem__(self, idx):
-        row_1 = self.df.iloc[idx]
-        patientid_1 = row_1["Patient"]
-        passage_1 = row_1["Passage"]
-        day_1 = row_1["day1"]
-        img_path_1 = f'{row_1["img1"]}'
-
-        day_2 = row_1["day2"]
-        day=row_1["day"]
-        img_path_2 = f'{row_1["img2"]}'
-        img_1 = Image.open(img_path_1).convert("RGB")
-        img_2 = Image.open(img_path_2).convert("RGB")
-
-        label = row_1["label"]
-        if self.transform:
-            img_1 = self.transform(img_1)
-            img_2 = self.transform(img_2)
 
 
-        return img_1, img_2, label, day
-
-
-
-train_transform = transforms.Compose(
-    [
-        transforms.Resize((512, 512)),
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomVerticalFlip(),
-        transforms.RandomRotation(90),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                             std=[0.229, 0.224, 0.225]),
-    ]
-)
-
-test_transform = transforms.Compose(
-    [
-        transforms.Resize((512, 512)),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                             std=[0.229, 0.224, 0.225]),
-    ]
-)
 
 
 train_loader = DataLoader(
-    CustomDataset(train_df, train_transform), batch_size=batch_size, shuffle=True
+    CustomDataset(train_df, train_transform), batch_size=args.batch_size, shuffle=True
 )
 
 val_loader = DataLoader(
-    CustomDataset(val_df, test_transform), batch_size=batch_size, shuffle=False
+    CustomDataset(val_df, test_transform), batch_size=args.batch_size, shuffle=False
 )
 
 test_loader = DataLoader(
-    CustomDataset(test_df, test_transform), batch_size=batch_size, shuffle=False
+    CustomDataset(test_df, test_transform), batch_size=args.batch_size, shuffle=False
 )
 
 print('loader done')
 
-model = models_vit.CustomModel(ckpt= '/home/ra9027/breast_organoid/code_20240426/checkpoint-80.pth', global_pool=True)
+model = models_vit.CustomModel(ckpt= args.pretrained_weight, global_pool=True)
 
-# for _, param in model.named_parameters():
-#     param.requires_grad = False
 
-# for _, param in model.fc.named_parameters():
-#     param.requires_grad = True
-
-epochs = 100
-lr = 1e-4
 
 model = model.to(device)
 
-model = nn.DataParallel(model)
+if args.mode == 'linear':
+    for _, param in model.named_parameters():
+        param.requires_grad = False
 
-optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    for _, param in model.fc.named_parameters():
+        param.requires_grad = True
+
+
+optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 criterion = nn.CrossEntropyLoss()
 
 
@@ -149,7 +109,7 @@ best_auc = 0
 
 print('start training')
 
-for epoch in range(1, epochs + 1):
+for epoch in range(1, args.epochs + 1):
     train_losses = []
     start = time.time()
     model.train()
