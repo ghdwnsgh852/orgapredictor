@@ -1,0 +1,8 @@
+torch==2.0.1
+torchvision==0.9.1
+tqdm==4.64.0
+timm==0.3.2
+openpyxl
+tensorboard
+numpy
+pandas
