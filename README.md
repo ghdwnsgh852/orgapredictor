@@ -1,5 +1,7 @@
 # OrgaPredictor
+<img alt="image" src="https://github.com/ghdwnsgh852/orgapredictor/assets/29062695/3e75b61d-2955-440c-a271-bcd8d8766852"><br>
 
+<img alt="image" src="https://github.com/ghdwnsgh852/orgapredictor/assets/29062695/a44993d2-809f-468c-a237-20e9d6d59276">
 
 
 
@@ -11,10 +13,11 @@ The complexity and heterogeneity of cancer pathogenesis necessitate the developm
 # Using OrgaPreditor
 
 ### Fine-tuning OrgaPreditor
-To fine-tune OrgaExtractor with your own dataset:
+To fine-tune OrgaPredictor with your own dataset:
 
 ```
-python3 main.py --lr 1e-5 --batch_size 2 --num_epoch 100 --data_dir YOUR_DATASET_PATH --ckpt_dir DOWNLOADED_MODEL_PATH --result_dir DESIRABLE_RESULT_PATH --mode "train" --cuda_devices 0 --train_continue "on"
+python3 main.py --lr 1e-5 --batch_size 2 --num_epoch 100 --data_dir YOUR_DATASET_PATH --ckpt_dir DOWNL
+OADED_MODEL_PATH --result_dir DESIRABLE_RESULT_PATH --mode "train" --cuda_devices 0 --train_continue "on"
 ```
 
 ## Contact
