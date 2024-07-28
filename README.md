@@ -16,7 +16,14 @@ The ViT-Dual-MAE-Finetune and Linearprobe models were particularly effective, ac
 These findings highlight the potential of AI models in enhancing the efficiency and scalability of organoid-based research, paving the way for significant advancements in precision medicine and personalized cancer treatment.
 
 
+
 # Using OrgaPreditor
+
+
+## Model Weight
+
+You can download weight [here](https://drive.google.com/drive/folders/147yj6spRwFj_dgMgdvVzxT7VM96X-F2N?usp=sharing)
+
 
 ### Fine-tuning OrgaPreditor
 To fine-tune OrgaPredictor with your own dataset:
