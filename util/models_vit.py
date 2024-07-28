@@ -24,7 +24,9 @@ import timm
 assert timm.__version__ == "0.3.2" # version check
 from timm.models.layers import trunc_normal_
 
-from pos_embed import interpolate_pos_embed
+from .pos_embed import interpolate_pos_embed
+
+
 
 
 
@@ -151,9 +153,24 @@ class CustomModel(nn.Module):
         x2 = self.model.forward_features(img2)
 
         x = torch.cat([x1, x2], dim=1)
+        x = self.fc(x)
 
         return x
 
+
+class AttentionModel(CustomModel):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.feature = []
+
+    def register_hook(self):
+
+        def hook_fn(model, input):
+
+            self.feature.append(input)
+
+        self.model.blocks[11].attn.attn_drop.register_forward_pre_hook(hook_fn)
 
 
 class CustomMinusModel(nn.Module):
