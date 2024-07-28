@@ -22,7 +22,7 @@ These findings highlight the potential of AI models in enhancing the efficiency 
 
 ## Model Weight
 
-You can download weight [here](https://drive.google.com/drive/folders/147yj6spRwFj_dgMgdvVzxT7VM96X-F2N?usp=sharing)
+You can download our pretrained model [here](https://drive.google.com/drive/folders/147yj6spRwFj_dgMgdvVzxT7VM96X-F2N?usp=sharing)
 
 
 ### Fine-tuning OrgaPreditor
