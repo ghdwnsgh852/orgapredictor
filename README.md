@@ -20,7 +20,7 @@ These findings highlight the potential of AI models in enhancing the efficiency 
 # Using OrgaPreditor
 
 
-## Model Weight
+### Model Weight
 
 You can download our pretrained model [here](https://drive.google.com/drive/folders/147yj6spRwFj_dgMgdvVzxT7VM96X-F2N?usp=sharing)
 
@@ -29,9 +29,16 @@ You can download our pretrained model [here](https://drive.google.com/drive/fold
 To fine-tune OrgaPredictor with your own dataset:
 
 ```
-python3 main.py --lr 1e-5 --batch_size 2 --num_epoch 100 --data_dir YOUR_DATASET_PATH --ckpt_dir DOWNL
-OADED_MODEL_PATH --result_dir DESIRABLE_RESULT_PATH --mode "train" --cuda_devices 0 --train_continue "on"
+python3 main.py --name EXPERIMENT_NAME --model finetune --lr 1e-5 --batch_size 4 --num_epoch 100 --train_csv YOUR_TRAIN_CSV --val_csv YOUR_VALID_CSV --test_csv YOUR_TEST_CSV --pretrained_weight PRETRAINED_MODEL
 ```
+
+### Test OrgaPreditor
+To test OrgaPredictor and draw attentionmap with your own dataset:
+
+```
+python3 test.py --batch_size 4 --test_csv YOUR_TEST_CSV --model_path YOUR_MODEL_PATH --output_dir output
+```
+
 
 ## Contact
 Junho Hong(ra9027@yonsei.ac.kr) Taeyong Kweon(kmskty3@yuhs.ac)
